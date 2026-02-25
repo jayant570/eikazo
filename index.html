@@ -1,191 +1,174 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eikazo Express</title>
-
 <style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f4f4f4;
-}
-
-header{
-  background:#6c2bd9;
-  color:white;
-  padding:15px;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.search{
-  padding:10px;
-  background:white;
-}
-
-.search input{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ddd;
-}
-
-.categories{
-  display:flex;
-  overflow-x:auto;
-  gap:10px;
-  padding:10px;
-  background:white;
-}
-
-.category{
-  background:#eee;
-  padding:8px 14px;
-  border-radius:20px;
-  font-size:13px;
-  white-space:nowrap;
-}
-
-.container{
-  padding:10px;
-  margin-bottom:90px;
-}
-
-.product{
-  background:white;
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.product-info{
-  width:65%;
-}
-
-.product h4{
-  margin:0;
-  font-size:15px;
-}
-
-.product p{
-  margin:4px 0 0 0;
-  color:#555;
-  font-size:13px;
-}
-
-.add-btn{
-  background:#16a34a;
-  color:white;
-  border:none;
-  padding:8px 14px;
-  border-radius:8px;
-}
-
-.qty-control{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.qty-control button{
-  background:#16a34a;
-  color:white;
-  border:none;
-  padding:5px 10px;
-  border-radius:6px;
-}
-
-.cart-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#16a34a;
-  color:white;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.hidden{
-  display:none;
-}
+body{margin:0;font-family:Arial;background:#f4f4f4;}
+header{background:#6c2bd9;color:white;padding:15px;font-size:18px;font-weight:bold;}
+.search{padding:10px;background:white;}
+.search input{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;}
+.categories{display:flex;overflow-x:auto;gap:8px;padding:10px;background:white;}
+.category{background:#eee;padding:6px 12px;border-radius:20px;font-size:13px;white-space:nowrap;cursor:pointer;}
+.category.active{background:#6c2bd9;color:white;}
+.container{padding:10px;margin-bottom:100px;}
+.product{background:white;padding:12px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.product-info{width:65%;}
+.product h4{margin:0;font-size:14px;}
+.product p{margin:4px 0 0 0;color:#555;font-size:13px;}
+.add-btn{background:#16a34a;color:white;border:none;padding:8px 14px;border-radius:8px;}
+.qty-control{display:flex;align-items:center;gap:8px;}
+.qty-control button{background:#16a34a;color:white;border:none;padding:5px 10px;border-radius:6px;}
+.cart-bar{position:fixed;bottom:0;left:0;width:100%;background:#16a34a;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;}
+.hidden{display:none;}
 </style>
 </head>
-
 <body>
 
 <header>Eikazo Express</header>
 
 <div class="search">
-<input type="text" placeholder="Search products...">
+<input type="text" id="searchInput" placeholder="Search products..." oninput="renderProducts()">
 </div>
 
-<div class="categories">
-<div class="category">Fruits</div>
-<div class="category">Vegetables</div>
-<div class="category">Dairy</div>
-<div class="category">Snacks</div>
-<div class="category">Beverages</div>
-<div class="category">Grocery</div>
-</div>
+<div class="categories" id="categoryList"></div>
 
 <div class="container" id="productList"></div>
 
-<div class="cart-bar hidden" id="cartBar" onclick="checkout()">
+<div class="cart-bar hidden" id="cartBar" onclick="alert('Checkout Phase Coming 🚀')">
 <span id="cartCount">0 Items</span>
 <span>Total ₹<span id="total">0</span></span>
 </div>
 
 <script>
-const products = [
-{name:"Rice 1kg", price:60},
-{name:"Aata 5kg", price:250},
-{name:"Mustard Oil 1L", price:160},
-{name:"Milk 500ml", price:28},
-{name:"Curd 400g", price:40},
-{name:"Bread", price:35},
-{name:"Eggs 12pcs", price:75},
-{name:"Banana 1 dozen", price:50},
-{name:"Apple 1kg", price:120},
-{name:"Potato 1kg", price:30},
-{name:"Tomato 1kg", price:35},
-{name:"Onion 1kg", price:32},
-{name:"Coke 1L", price:45},
-{name:"Chips", price:20},
-{name:"Maggi", price:14}
-];
+
+// ==========================
+// PRODUCT DATABASE (150+)
+// ==========================
+
+const categories = {
+"Grocery":[
+"Rice 1kg","Rice 5kg","Aata 1kg","Aata 5kg","Maida","Suji","Besan","Sugar 1kg","Salt","Poha",
+"Mustard Oil 1L","Refined Oil 1L","Chana Dal","Toor Dal","Moong Dal","Rajma","Chole","Tea 250g","Coffee 100g","Maggi"
+],
+"Vegetables":[
+"Potato","Onion","Tomato","Brinjal","Cabbage","Cauliflower","Spinach","Carrot","Cucumber","Peas",
+"Capsicum","Lady Finger","Bottle Gourd","Pumpkin","Garlic","Ginger","Green Chilli","Radish","Beetroot","Sweet Corn"
+],
+"Fruits":[
+"Apple","Banana","Orange","Mango","Papaya","Guava","Pomegranate","Watermelon","Pineapple","Grapes",
+"Kiwi","Strawberry","Pear","Chiku","Litchi","Dragon Fruit","Mosambi","Plum","Cherry","Avocado"
+],
+"Dairy":[
+"Milk 500ml","Milk 1L","Curd 400g","Paneer 200g","Butter","Cheese Slice","Cheese Block","Ghee 500ml","Cream","Flavoured Milk"
+],
+"Snacks":[
+"Chips","KurKure","Biscuit","Cream Biscuit","Namkeen","Bhujia","Chocolate","Candy","Popcorn","Nachos",
+"Oats","Cornflakes","Energy Bar","Peanut Butter","Jam"
+],
+"Beverages":[
+"Coke 1L","Pepsi 1L","Sprite","Fanta","Limca","Thumbs Up","Red Bull","Real Juice","Tropicana","Maaza",
+"Tea Bottle","Cold Coffee","Mineral Water","Soda","Lassi"
+]
+};
+
+// auto generate 150+ items by duplicating variations
+let products = [];
+Object.keys(categories).forEach(cat=>{
+  categories[cat].forEach((name,i)=>{
+    for(let v=1; v<=2; v++){
+      products.push({
+        name: name + " Pack " + v,
+        price: Math.floor(Math.random()*200)+20,
+        category: cat
+      });
+    }
+  });
+});
+
+// ==========================
+// RENDER SYSTEM
+// ==========================
 
 let cart = {};
 let total = 0;
+let currentCategory = "All";
 
 const productList = document.getElementById("productList");
+const categoryList = document.getElementById("categoryList");
 
-products.forEach((p,i)=>{
-  const div = document.createElement("div");
-  div.className="product";
-  div.innerHTML=`
-    <div class="product-info">
-      <h4>${p.name}</h4>
-      <p>₹${p.price}</p>
-    </div>
-    <button class="add-btn" onclick="addToCart(${i})">Add</button>
-  `;
-  productList.appendChild(div);
-});
+// create category buttons
+function renderCategories(){
+  categoryList.innerHTML="";
+  let allBtn = createCategoryButton("All");
+  categoryList.appendChild(allBtn);
 
-function addToCart(index){
-  const product = products[index];
-  if(!cart[index]){
-    cart[index]=1;
-  }else{
-    cart[index]++;
+  Object.keys(categories).forEach(cat=>{
+    categoryList.appendChild(createCategoryButton(cat));
+  });
+}
+
+function createCategoryButton(name){
+  let div=document.createElement("div");
+  div.className="category";
+  if(name===currentCategory) div.classList.add("active");
+  div.innerText=name;
+  div.onclick=()=>{
+    currentCategory=name;
+    renderCategories();
+    renderProducts();
   }
+  return div;
+}
+
+// render products
+function renderProducts(){
+  productList.innerHTML="";
+  let searchText=document.getElementById("searchInput").value.toLowerCase();
+
+  products.forEach((p,i)=>{
+    if((currentCategory==="All" || p.category===currentCategory)
+       && p.name.toLowerCase().includes(searchText)){
+
+      const div=document.createElement("div");
+      div.className="product";
+
+      let rightSide;
+      if(cart[i]){
+        rightSide=`
+        <div class="qty-control">
+          <button onclick="decrease(${i})">-</button>
+          <span>${cart[i]}</span>
+          <button onclick="increase(${i})">+</button>
+        </div>`;
+      }else{
+        rightSide=`<button class="add-btn" onclick="addToCart(${i})">Add</button>`;
+      }
+
+      div.innerHTML=`
+      <div class="product-info">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+      </div>
+      ${rightSide}`;
+
+      productList.appendChild(div);
+    }
+  });
+}
+
+function addToCart(i){
+  cart[i]=1;
+  updateCart();
+}
+function increase(i){
+  cart[i]++;
+  updateCart();
+}
+function decrease(i){
+  cart[i]--;
+  if(cart[i]<=0) delete cart[i];
   updateCart();
 }
 
@@ -193,20 +176,24 @@ function updateCart(){
   total=0;
   let count=0;
   for(let i in cart){
-    total += products[i].price * cart[i];
-    count += cart[i];
+    total+=products[i].price*cart[i];
+    count+=cart[i];
   }
   document.getElementById("total").innerText=total;
   document.getElementById("cartCount").innerText=count+" Items";
+
   if(count>0){
     document.getElementById("cartBar").classList.remove("hidden");
+  }else{
+    document.getElementById("cartBar").classList.add("hidden");
   }
+
+  renderProducts();
 }
 
-function checkout(){
-  alert("Checkout system coming in next phase 🚀");
-}
+renderCategories();
+renderProducts();
+
 </script>
-
 </body>
 </html>
