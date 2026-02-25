@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store Dashboard - Eikazo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .order {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    button {
+      padding: 5px 10px;
+      background: green;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Store Dashboard</h2>
+
+<div id="orders"></div>
+
+<script>
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+let container = document.getElementById("orders");
+
+if (orders.length === 0) {
+  container.innerHTML = "<p>No orders yet.</p>";
+}
+
+orders.forEach((order, index) => {
+  let div = document.createElement("div");
+  div.className = "order";
+  div.innerHTML = `
+    <p><strong>Order ID:</strong> ${order.id}</p>
+    <p><strong>Name:</strong> ${order.name}</p>
+    <p><strong>Address:</strong> ${order.address}</p>
+    <p><strong>Status:</strong> ${order.status}</p>
+    <button onclick="completeOrder(${index})">Mark Complete</button>
+  `;
+  container.appendChild(div);
+});
+
+function completeOrder(index) {
+  orders[index].status = "Completed";
+  localStorage.setItem("orders", JSON.stringify(orders));
+  location.reload();
+}
+</script>
+
+</body>
+</html>
