@@ -1,84 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Eikazo Store</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    .product {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    button {
-      background: green;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #cart {
-      margin-top: 20px;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-    }
-  </style>
+<title>Eikazo Express</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+}
+
+.header {
+  background: #6c2bd9;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 15px;
+}
+
+.product {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.product h3 {
+  margin: 0;
+}
+
+.price {
+  color: #777;
+  margin: 5px 0;
+}
+
+button {
+  background: #6c2bd9;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 15px;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
 </head>
+
 <body>
 
-<h1>QuickMart Store</h1>
+<div class="header">
+  Eikazo Express
+</div>
+
+<div class="container">
 
 <div class="product">
   <h3>Rice 1kg</h3>
-  <p>₹60</p>
-  <button onclick="addToCart('Rice 1kg',60)">Add to Cart</button>
+  <p class="price">₹60</p>
+  <button onclick="addToCart(60)">Add to Cart</button>
 </div>
 
 <div class="product">
   <h3>Oil 1L</h3>
-  <p>₹140</p>
-  <button onclick="addToCart('Oil 1L',140)">Add to Cart</button>
+  <p class="price">₹140</p>
+  <button onclick="addToCart(140)">Add to Cart</button>
 </div>
 
 <div class="product">
   <h3>Aata 5kg</h3>
-  <p>₹250</p>
-  <button onclick="addToCart('Aata 5kg',250)">Add to Cart</button>
+  <p class="price">₹250</p>
+  <button onclick="addToCart(250)">Add to Cart</button>
 </div>
 
-<div id="cart">
-  <h2>Cart</h2>
-  <ul id="cartItems"></ul>
-  <p><strong>Total: ₹<span id="total">0</span></strong></p>
+</div>
+
+<div class="cart-bar">
+  <div>Total: ₹<span id="total">0</span></div>
   <button onclick="checkout()">Checkout</button>
 </div>
 
 <script>
-  let total = 0;
+let total = 0;
 
-  function addToCart(name, price) {
-    let item = document.createElement("li");
-    item.textContent = name + " - ₹" + price;
-    document.getElementById("cartItems").appendChild(item);
-    total += price;
-    document.getElementById("total").innerText = total;
-  }
+function addToCart(price) {
+  total += price;
+  document.getElementById("total").innerText = total;
+}
 
-  function checkout() {
+function checkout() {
   window.location.href = "checkout.html";
-  }
+}
 </script>
 
 </body>
